@@ -32,46 +32,48 @@ if __name__ == "__main__":
     ###
 
     pp = plot_tools(central_longitude=270.)
+#    pp = plot_tools(central_longitude=180.)    
 
     # Stat by plotting u
-    pp.quick_plot(lat, lon, u, add_cyclic=True)
+#    pp.quick_plot(lat, lon, u, add_cyclic=True)
 
     ###
 
     # Initialize spectral
-#    spec = spectral(lat, lon)
+    spec = spectral(lat, lon)
 
     ##
 
     # Caluclate horizontal gradients
-#    dudx, dudy = spec.gradient(u)
+    dudx, dudy = spec.gradient(u)
 #    pp.quick_plot(lat, lon, dudy, add_cyclic=True)
 
     ##
 
     # Calculate planetart and relative vorticity
-#    vrt = spec.uv2vrt(u, v)
-#    f = spec.planetaryvorticity()
+    vrt = spec.uv2vrt(u, v)
+    f = spec.planetaryvorticity()
 
-#    pp.quick_plot(lat, lon, vrt, add_cyclic=True)
+#    pp.quick_plot(lat, lon, f+vrt, add_cyclic=True)
 
     ##
 
     # Calculate geostrophic streamfunction and velocity potential
-#    psi, chi = spec.uv2sfvp(u, v)
+    psi, chi = spec.uv2sfvp(u, v)
 
     # Remove zonal mean
-#    psi -= psi.mean(axis=-1)[:, None]
+    psi -= psi.mean(axis=-1)[:, None]
 
-#    pp.quick_plot(lat, lon, psi, add_cyclic=True)
+    pp.quick_plot(lat, lon, psi, add_cyclic=True)
+#    pp.quick_plot(lat, lon, chi, add_cyclic=True)
 
     ##
 
     # Assess error from spectral transform
-#    vrt, div = spec.uv2vrtdiv(u, v)
-#    u0, v0 = spec.vrtdiv2uv(vrt, div)
+    vrt, div = spec.uv2vrtdiv(u, v)
+    u0, v0 = spec.vrtdiv2uv(vrt, div)
 
-#    levels = np.linspace(-1.e-2, 1.e-2, 21)
+    levels = np.linspace(-1.e-2, 1.e-2, 21)
 #    pp.quick_plot(lat, lon, u-u0, add_cyclic=True, levels=levels)
 
 

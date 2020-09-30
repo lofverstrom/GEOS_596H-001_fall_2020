@@ -59,9 +59,13 @@ class spectral:
             return(var[:, ::-1, :])
 
     def planetaryvorticity(self, omega=None):
-        pass
+        if omega is None:
+            omega = self.omega
+        tmp = 2.*omega*np.sin(self.rlats)        
+        f = tmp[:]*np.ones((self.nlat, self.nlon),
+                           dtype=self.dtype)
+        return(f)
         
-
     def uv2vrt(self, u, v, trunc=None):
         """
         Calculate relative vorticity from horizonal wind field
@@ -74,8 +78,17 @@ class spectral:
         return(vrtg)
 
     def uv2div(self, u, v, trunc=None):
-        pass
+        _, divs = self.s.getvrtdivspec(u, v, ntrunc=trunc)
+        divg = self.s.spectogrd(divs)
+        return(divg)
 
+    def uv2vrtdiv(self, u, v, trunc=None):
+        vrts, divs = self.s.getvrtdivspec(u, v, ntrunc=trunc)
+        vrtg = self.s.spectogrd(vrts)
+        divg = self.s.spectogrd(divs)        
+        return(vrtg, divg)    
+    
+        
     def uv2sfvp(self, u, v, trunc=None):
         """
         Calculate geostrophic streamfuncion and 

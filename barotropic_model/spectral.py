@@ -3,14 +3,14 @@
 import sys
 
 import numpy as np
-from spharm import Spharmt #, getspecindx, gaussian_lats_wts
+from spharm import Spharmt  # , getspecindx, gaussian_lats_wts
 #import time
 
 #############################
 
 
 class spectral:
-    def __init__(self, lat, lon, 
+    def __init__(self, lat, lon,
                  rsphere=6.3712e6, legfunc='stored', trunc=None):
 
         # Length of lat/lon arrays
@@ -54,7 +54,7 @@ class spectral:
         """
         Flip latitude array upside-down
         """
-        
+
         if len(np.shape(var)) == 1:
             return(var[::-1])
         if len(np.shape(var)) == 2:
@@ -69,20 +69,21 @@ class spectral:
 
         if omega is None:
             omega = self.omega
-        tmp = 2.*omega*np.sin(self.rlats)        
+        tmp = 2.*omega*np.sin(self.rlats)
         f = tmp[:]*np.ones((self.nlat, self.nlon),
                            dtype=self.dtype)
         return(f)
-        
+
     def uv2vrt(self, u, v, trunc=None):
         """
         Relative vorticity from u and v wind
         Input:  u and v  (grid)
         Output: relative vorticity (grid)
         """
-        
-        if trunc = None: trunc=self.trunc
-        
+
+        if trunc == None:
+            trunc = self.trunc
+
         vrts, _ = self.s.getvrtdivspec(u, v, ntrunc=trunc)
         vrtg = self.s.spectogrd(vrts)
         return(vrtg)
@@ -93,9 +94,10 @@ class spectral:
         Input: u and v (grid)
         Output: divergence (grid)
         """
-        
-        if trunc = None: trunc=self.trunc
-        
+
+        if trunc == None:
+            trunc = self.trunc
+
         _, divs = self.s.getvrtdivspec(u, v, ntrunc=trunc)
         divg = self.s.spectogrd(divs)
         return(divg)
@@ -106,30 +108,28 @@ class spectral:
         Input: u and v (grid)
         Output: vorticity and divergence (grid)
         """
-        
+
         vrts, divs = self.s.getvrtdivspec(u, v, ntrunc=trunc)
         vrtg = self.s.spectogrd(vrts)
-        divg = self.s.spectogrd(divs)        
-        return(vrtg, divg)    
-    
-        
+        divg = self.s.spectogrd(divs)
+        return(vrtg, divg)
+
     def uv2sfvp(self, u, v, trunc=None):
         """
-        Geostrophic streamfuncion and 
+        Geostrophic streamfuncion and
         velocity potential from u and v winds
         Input: u and v (grid)
         Output: strf and vel potential (grid)
         """
-        
+
         psig, chig = self.s.getpsichi(u, v, ntrunc=trunc)
         return(psig, chig)
 
-        
     def vrtdiv2uv(self, vrt, div, realm='grid', trunc=None):
         """
         # u and v wind from vorticity and divergence
         # Input: vrt, div (either grid or spec)
-        # Output: u and v (grid) 
+        # Output: u and v (grid)
         """
         if realm in ['g', 'grid']:
             vrts = self.s.grdtospec(vrt, trunc)
@@ -140,7 +140,6 @@ class spectral:
         ug, vg = self.s.getuv(vrts, divs)
         return(ug, vg)
 
-    
     def gradient(self, var, trunc=None):
         """
         Calculate horizontal gradients

@@ -20,8 +20,7 @@ class plot_tools:
         self.central_longitude = central_longitude
 
         self.trans = ccrs.PlateCarree()
-        self.proj = ccrs.PlateCarree(central_longitude= \
-                                       self.central_longitude,
+        self.proj = ccrs.PlateCarree(central_longitude=self.central_longitude,
                                      globe=None)
 
         self.fig = plt.figure(figsize=(9, 6))

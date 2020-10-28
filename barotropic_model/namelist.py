@@ -15,7 +15,6 @@ dt = 10.*60.        # Timestep (seconds)
 nforward = 20       # Forward step every # timesteps
 
 
-
 # Spectral operators
 trunc = None        # Truncation (if None, defaults to # latitudes)
 rsphere = 6.3712e6  # Planetary radius

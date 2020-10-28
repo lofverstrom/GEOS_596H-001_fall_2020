@@ -27,7 +27,7 @@ class barotropic:
         self.dt = nl.dt
 
         self.nforward = nl.nforward  # forward step every # steps
-        
+
 #        self.start_time = datetime(2020, 10, 9, 0)
         self.start_time = datetime.now()
 
@@ -40,13 +40,13 @@ class barotropic:
 
         self.ny = len(self.latd)
         self.nx = len(self.lond)
-        
+
         # +++ Initialize spectral routines +++ #
         self.s = spectral(self.latd, self.lond)
 
         # +++ Initialize model fields +++ #
         self.vortp_tend = np.zeros((self.ny, self.nx))
-        
+
         self.vortp = np.zeros((self.ny, self.nx, 3))
 
         # +++ Initialize forcing +++ #
@@ -54,13 +54,11 @@ class barotropic:
         self.topo = self.f.topography_simple()
         self.dxtopo, self.dytopo = self.s.gradient(self.topo)
 
-        
+
 #        pp = plot_tools()
 #        pp.quick_plot(self.latd, self.lond, self.topo)
 #        pp.quick_plot(self.latd, self.lond, self.dxtopo)
 
-
-        
         # +++ Model diagnostics +++ #
         # netCDF output
         self.output_freq = nl.output_freq
@@ -76,7 +74,9 @@ class barotropic:
         if not os.path.isdir(self.plot_dir):
             os.mkdir(self.plot_dir)
 
-    #############################
+
+#############################
+
 
     def integrate_linear_dynamics(self):
         """
@@ -88,35 +88,29 @@ class barotropic:
         ic = 0
         ip = 1
 
-        self.nsteps = 5
         for it in range(self.nsteps):
 
             # +++ Reset tendencies +++ #
             self.vortp_tend *= 0.
 
-            
             # +++ Dynamics +++ #
             pass
 
             ######
 
-            print(it, im, ic, ip)
-            
-            
             # +++ Timestep +++ #
             if it % self.nforward == 0:
                 # Forward step
-                self.vortp[:,:,ip] = self.vortp[:,:,ic] - self.vortp_tend * self.dt
+                self.vortp[:, :, ip] = self.vortp[:, :, ic] - self.dt*self.vortp_tend
             else:
                 # Leapfrog step
-                self.vortp[:,:,ip] = self.vortp[:,:,im] - self.vortp_tend * 2.*self.dt 
+                self.vortp[:, :, ip] = self.vortp[:, :, im] - 2.*self.dt*self.vortp_tend
 
             # update time-pointers (cyclic permutation)
             itmp = im
             im = ic
             ic = ip
             ip = itmp
-            
 
             ######
 
@@ -136,14 +130,24 @@ class barotropic:
             if self.output_freq != 0 and chr % self.output_freq == 0:
                 print('-- Step {}: saving data'.format(it))
 
-    #############################
+
+#############################
+
 
     def integrate_nonlinear_dynamics(self):
         """
         Nonlinear dynamics
         """
 
-        for it in range(self, nsteps):
+        # Initialize loop indices
+        im = 2
+        ic = 0
+        ip = 1
+
+        for it in range(self.nsteps):
+
+            # +++ Reset tendencies +++ #
+            self.vortp_tend *= 0.
 
             # +++ Dynamics +++ #
             pass
@@ -151,7 +155,18 @@ class barotropic:
             ######
 
             # +++ Timestep +++ #
-            pass
+            if it % self.nforward == 0:
+                # Forward step
+                self.vortp[:, :, ip] = self.vortp[:, :, ic] - self.dt*self.vortp_tend
+            else:
+                # Leapfrog step
+                self.vortp[:, :, ip] = self.vortp[:, :, im] - 2.*self.dt*self.vortp_tend
+
+            # update time-pointers (cyclic permutation)
+            itmp = im
+            im = ic
+            ic = ip
+            ip = itmp
 
             ######
 
@@ -173,14 +188,14 @@ class barotropic:
 
             ###
 
-
 #############################
+
 
 if __name__ == '__main__':
 
-    model = barotropic()
-    model.integrate_linear_dynamics()
-    
+    #    model = barotropic()
+    #    model.integrate_linear_dynamics()
+
     pass
 
 #############################
